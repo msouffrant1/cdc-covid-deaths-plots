@@ -1,0 +1,150 @@
+import pandas as pd
+import plotly.graph_objects as go
+import numpy as np
+
+# Read data
+data_path = "/Users/msouffrant1/Documents/My information/Jobs/CDC/Response/projects/codes/funnel/US_edit_funnel.csv"
+data_path1 = "/Users/msouffrant1/Documents/My information/Jobs/CDC/Response/projects/codes/funnel/male_funnel.csv"
+data_path2 = "/Users/msouffrant1/Documents/My information/Jobs/CDC/Response/projects/codes/funnel/female_funnel.csv"
+
+email_campaign_funnel = pd.read_csv(data_path)
+df1 = pd.read_csv(data_path1)  # Male data
+df2 = pd.read_csv(data_path2)  # Female data
+
+# Clean 'Sex*' column to ensure consistency (strip spaces and capitalize)
+email_campaign_funnel['Sex*'] = email_campaign_funnel['Sex*'].str.strip().str.capitalize()
+
+# Ensure numeric columns are converted to numeric types
+email_campaign_funnel['per 100k*'] = pd.to_numeric(email_campaign_funnel['per 100k*'], errors='coerce')
+email_campaign_funnel['COVID-19 Deaths*'] = pd.to_numeric(email_campaign_funnel['COVID-19 Deaths*'], errors='coerce')
+
+# Custom Y-axis category order
+y_axis_order = [
+    'All Ages', 'Under 1 year', '**0-17 years', '1-4 years', '5-14 years', '15-24 years', 
+    '25-34 years', '30-39 years', '35-44 years', '40-49 years', 
+    '45-54 years', '50-64 years', '55-64 years', '65-74 years', 
+    '75-84 years', '85 years and over'
+]
+
+# Create Male and Female DataFrames
+male_data = email_campaign_funnel[email_campaign_funnel['Sex*'] == 'Male']
+female_data = email_campaign_funnel[email_campaign_funnel['Sex*'] == 'Female']
+
+# Create hover data for Male and Female traces
+def get_hover_data_for_male(row):
+    matching_row = df1[df1['Age Group**'] == row['Age Group*']]
+    if not matching_row.empty:
+        return [
+            matching_row['Sex**'].values[0],
+            matching_row['Age Group**'].values[0],
+            matching_row['COVID-19 Deaths**'].values[0],
+            matching_row['per 100k**'].values[0],
+            'Male'
+        ]
+    else:
+        return ["", "", "", "", ""]
+
+def get_hover_data_for_female(row):
+    matching_row = df2[df2['Age Group***'] == row['Age Group*']]
+    if not matching_row.empty:
+        return [
+            matching_row['Sex***'].values[0],
+            matching_row['Age Group***'].values[0],
+            matching_row['COVID-19 Deaths***'].values[0],
+            matching_row['per 100k***'].values[0],
+            'Female'
+        ]
+    else:
+        return ["", "", "", "", ""]
+
+# Apply hover data logic row by row for Male and Female separately
+male_customdata = male_data.apply(get_hover_data_for_male, axis=1)
+female_customdata = female_data.apply(get_hover_data_for_female, axis=1)
+
+# Define breaks and labels for the x-axis
+brks = np.arange(-6200, 6201, 1000)  # Extend breaks to negative for symmetrical effect
+lbls = [f"{abs(x)//1}" for x in brks]  # Corresponding labels for the breaks
+
+# Create the plot using Plotly Graph Objects for more flexibility
+fig = go.Figure()
+
+# Add male trace (positive direction)
+fig.add_trace(go.Bar(
+    y=male_data['Age Group*'],
+    x=male_data['per 100k*'],
+    orientation='h',
+    name='Male',
+    marker=dict(color='blue'),
+    customdata=male_customdata,
+    hovertemplate=(
+        '<b>Sex:</b> %{customdata[4]}<br>'  # Sex
+        + '<b>Age Group:</b> %{customdata[1]}<br>'  # Age Group
+        + '<b>COVID-19 Deaths:</b> %{customdata[2]:,.0f} deaths<br>'  # Total deaths
+        + '<b>COVID-19 Deaths (per 100k):</b> %{customdata[3]:,.0f}'  # per 100k
+    )
+))
+
+# Add female trace (negative direction for symmetry)
+fig.add_trace(go.Bar(
+    y=female_data['Age Group*'],
+    x=female_data['per 100k*'],  # Flip to negative for symmetry
+    orientation='h',
+    name='Female',
+    marker=dict(color='red'),
+    customdata=female_customdata,
+    hovertemplate=(
+        '<b>Sex:</b> %{customdata[4]}<br>'  # Sex
+        + '<b>Age Group:</b> %{customdata[1]}<br>'  # Age Group
+        + '<b>COVID-19 Deaths:</b> %{customdata[2]:,.0f} deaths<br>'  # Total deaths
+        + '<b>COVID-19 Deaths (per 100k):</b> %{customdata[3]:,.0f}'  # per 100k
+    )
+))
+
+# Layout and styling
+fig.update_layout(
+    title="United States COVID-19 Deaths by Sex and Age",  # Add the title here
+    title_x=0.5,
+    title_font=dict(size=36, family="Arial", color="black"),  # Set the font size, family, and color
+    barmode='overlay',  # Stack bars
+    xaxis_title="COVID-19 Deaths (per 100k)",
+    yaxis_title="Age Category",
+    yaxis=dict(
+        categoryorder="array",    
+        categoryarray=y_axis_order,  # Set custom order for y-axis
+        showgrid=True, 
+        gridcolor='lightgray',  
+        gridwidth=0.5,  
+        griddash='dash',  
+        ticks="outside",  
+    ),
+    xaxis=dict(
+        tickmode='array',  # Use custom ticks
+        tickvals=brks,     # Apply the breaks for the x-axis
+        ticktext=lbls,     # Apply the labels for the x-axis
+        range=[-6200, 6200],  # Set symmetrical range for both negative and positive values
+        showgrid=False,    # Disable gridlines for the x-axis
+    ),
+    plot_bgcolor='white',  # Set the plot background to white without borders
+    hoverlabel=dict(bgcolor="white", font_size=13, font_family="Rockwell", align="left"),  
+    height=600,  
+    legend=dict(
+        x=0.02,  
+        y=0.2,   
+        xanchor='left',  
+        yanchor='bottom',  
+        bgcolor='rgba(255, 255, 255, 0.5)',  
+        bordercolor='black',  # Keep black border for legend
+        borderwidth=2,  
+        title=dict(
+            text='Sex',  
+            font=dict(size=14, family="Arial"),  
+        ),
+    ),
+    margin=dict(l=50, r=40, t=60, b=60),  
+)
+
+# Show the plot
+fig.show()
+
+# Save the plot as an interactive HTML file
+fig.write_html("/Users/msouffrant1/Documents/My information/Jobs/CDC/Response/projects/codes/funnel/covid_sex_age_interactive_plot.html")
