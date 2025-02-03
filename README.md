@@ -1,1 +1,1 @@
-This barplot contains data on COVID-19 Deaths by Sex and Age, in which case the data was last updated in 2023.
+This bar plot presents data on COVID-19 related deaths categorized by sex and age, with the most recent update occurring in 2023.
