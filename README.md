@@ -20,12 +20,12 @@ Identifier - [Interactive plot - COVID-19 Mortality in the United States: A Brea
 
 Source - [Provisional COVID-19 Deaths by Sex and Age | Data | Centers for Disease Control and Prevention](https://data.cdc.gov/NCHS/Provisional-COVID-19-Deaths-by-Sex-and-Age/9bhg-hcku/about_data) 
 
-Language: English
+Language- English
 
-Relation: [U.S Census Bureau – Resident Population of the United States by Sex and age as of July 1, 2023](https://www2.census.gov/programs-surveys/popest/tables/2020-2023/national/asrh/nc-est2023-agesex.xlsx)
+Relation - [U.S Census Bureau – Resident Population of the United States by Sex and age as of July 1, 2023](https://www2.census.gov/programs-surveys/popest/tables/2020-2023/national/asrh/nc-est2023-agesex.xlsx)
 
-Coverage: United States
+Coverage - United States
 
-Rights: N/A
+Rights - N/A
 
 
