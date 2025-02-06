@@ -16,8 +16,7 @@ Type: Interactive plot
 
 Format: HTML
 
-Identifier: Interactive plot - COVID-19 Mortality in the United States: A Breakdown by Sex and Age
-<img width="401" alt="image" src="https://github.com/user-attachments/assets/c6d18184-a742-48f1-92c1-5bf667d041b0" />
+Identifier: [Interactive plot - COVID-19 Mortality in the United States: A Breakdown by Sex and Age](https://msouffrant1.github.io/cdc-covid-deaths-plots/)
 
 Source: Provisional COVID-19 Deaths by Sex and Age | Data | Centers for Disease Control and Prevention 
 <img width="447" alt="image" src="https://github.com/user-attachments/assets/8573aee5-c61a-4041-973b-51050e989af4" />
