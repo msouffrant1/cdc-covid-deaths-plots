@@ -1,4 +1,4 @@
-Title: United States COVID-19 Deaths by Sex and Age
+Title - United States COVID-19 Deaths by Sex and Age
 
 Creator: Michael Souffrant, Center of Disease Control and Prevention (CDC)
 
